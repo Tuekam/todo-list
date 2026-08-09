@@ -1,0 +1,9 @@
+packages:
+  - 'packages/*'
+  - 'apps/*'
+  - 'core'  
+
+allowBuilds:
+  '@firebase/util': false
+  protobufjs: false
+  unrs-resolver: false

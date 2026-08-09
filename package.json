@@ -1,24 +1,22 @@
 {
-  "name": "todolist",
-  "version": "0.1.0",
+  "name": "todo-list-monorepo",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "eslint"
-  },
-  "dependencies": {
-    "next": "16.3.0",
-    "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "dev": "pnpm run --filter web dev",
+    "build": "pnpm run --filter web build",
+    "start": "pnpm run --filter web start",
+    "build:packages": "pnpm run -r --filter \"./packages/*\" build",
+    "clean": "pnpm run -r clean && rm -rf node_modules",
+    "lint": "pnpm run -r lint"
   },
   "devDependencies": {
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "16.3.0",
-    "typescript": "^5"
+    "typescript": "^5.0.0",
+    "@types/node": "^20.0.0",
+    "next": "latest"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
   }
 }

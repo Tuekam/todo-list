@@ -14,14 +14,7 @@
     "sourceMap": true,
     "composite": true,
     "incremental": true,
-    "resolveJsonModule": true,
-    "baseUrl": ".",
-    "paths": {
-      "core": ["./core/src"],
-      "@todo-list/data": ["./packages/data/src"],
-      "@todo-list/domain": ["./packages/domain/src"],
-      "@todo-list/presentation": ["./packages/presentation/src"]
-    }
+    "resolveJsonModule": true
   },
   "exclude": ["node_modules", "dist", ".next"]
 }

@@ -1,0 +1,31 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "jsx": "preserve",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "module": "esnext",
+    "noEmit": true,
+    "plugins": [{ "name": "next" }],
+    "allowJs": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./app/*"],
+      "core": ["../../core/src"],
+      "@todo-list/data": ["../../packages/data/src"],
+      "@todo-list/domain": ["../../packages/domain/src"],
+      "@todo-list/presentation": ["../../packages/presentation/src"]
+    }
+  },
+  "include": [
+    "next-env.d.ts", 
+    "app/**/*.ts", 
+    "app/**/*.tsx",
+    "../../core/src/**/*.ts",
+    "../../core/src/**/*.tsx",
+    "../../packages/**/src/**/*.ts",
+    "../../packages/**/src/**/*.tsx"
+  ],
+  "exclude": ["node_modules", ".next", "dist"]
+}
