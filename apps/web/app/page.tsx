@@ -1,6 +1,6 @@
 "use client";
 
-import { useTasks } from "./lib/hooks";
+import { useTasks } from "@todo-list/presentation";
 import { TaskPage } from "@todo-list/presentation";
 
 export default function Home() {

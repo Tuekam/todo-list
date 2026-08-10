@@ -1,39 +1,42 @@
-import { createContainer, asClass, InjectionMode } from 'awilix';
+import { createContainer, asClass, asValue, AwilixContainer } from "awilix";
+import { TaskUseCaseImpl } from "@todo-list/domain";
+import type { TaskUseCase } from "core"; 
+import {
+  TaskGetRepositoryImpl,
+  TaskCreateRepositoryImpl,
+  TaskUpdateRepositoryImpl,
+  TaskDeleteRepositoryImpl,
+  db
+} from "@todo-list/data";
+import type { AppCradle } from "./types";
 
-let containerInstance: any = null;
+let containerInstance: AwilixContainer<AppCradle> | null = null;
 
-function createContainerInstance() {
-  // Importer les classes à l'intérieur de la fonction
-  const { TaskUseCases } = require('@todo-list/domain');
-  const {
-    TaskGetRepositoryImpl,
-    TaskCreateRepositoryImpl,
-    TaskUpdateRepositoryImpl,
-    TaskDeleteRepositoryImpl,
-  } = require('@todo-list/data');
-
-  const container = createContainer({
-    injectionMode: InjectionMode.CLASSIC,
-  });
+export function buildContainer(): AwilixContainer<AppCradle> {
+  const container = createContainer<AppCradle>();
 
   container.register({
+    db: asValue(db),
     getRepository: asClass(TaskGetRepositoryImpl).singleton(),
     createRepository: asClass(TaskCreateRepositoryImpl).singleton(),
     updateRepository: asClass(TaskUpdateRepositoryImpl).singleton(),
     deleteRepository: asClass(TaskDeleteRepositoryImpl).singleton(),
-    taskUseCases: asClass(TaskUseCases).singleton(),
+    taskUseCases: asClass(TaskUseCaseImpl).singleton(),
   });
 
   return container;
 }
 
-export function getContainer() {
+export function getContainer(): AwilixContainer<AppCradle> {
   if (!containerInstance) {
-    containerInstance = createContainerInstance();
+    containerInstance = buildContainer();
   }
   return containerInstance;
 }
 
-// Exporter une instance par défaut
-const container = getContainer();
-export default container;
+export function resolveTaskUseCases(): TaskUseCase {
+  const container = getContainer();
+  return container.resolve('taskUseCases');
+}
+
+export default getContainer;

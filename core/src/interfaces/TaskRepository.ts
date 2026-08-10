@@ -6,19 +6,17 @@ export interface TaskFilters {
   sort?: string;
   direction?: "asc" | "desc";
   limit?: number;
-  page?: number;
+  lastDocId?: string; 
 }
 
-export interface PaginatedResult<T> {
-  items: T[];
-  total: number;
-  page: number;
-  limit: number;
-  totalPages: number;
+export interface TaskResult {
+  items: Task[];
+  nextCursor?: string; 
+  hasMore: boolean;
 }
 
 export interface GetTasksRepository {
-  getAll(filters?: TaskFilters): Promise<PaginatedResult<Task>>;
+  getAll(filters?: TaskFilters): Promise<TaskResult>;
 }
 
 export interface CreateTaskRepository {

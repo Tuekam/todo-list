@@ -1,55 +1,82 @@
-import { 
-  collection, getDocs, query, where, orderBy, limit,
-  QueryConstraint, startAfter, documentId, getDoc, doc
+import {
+  collection, getDocs, query, where, orderBy,
+  QueryConstraint, Firestore, limit, startAfter, doc, getDoc,
+  QueryDocumentSnapshot, DocumentData
 } from "firebase/firestore";
-import { db } from "../firebase/firebase";
-import { Task, GetTasksRepository, TaskFilters, PaginatedResult } from "core";
+import { Task, GetTasksRepository, TaskFilters, TaskResult } from "core";
 
 export class TaskGetRepositoryImpl implements GetTasksRepository {
-  async getAll(filters?: TaskFilters): Promise<PaginatedResult<Task>> {
+  private db: Firestore;
+
+  constructor({ db }: { db: Firestore }) {
+    this.db = db;
+  }
+
+  async getAll(filters?: TaskFilters): Promise<TaskResult> {
     const constraints: QueryConstraint[] = [];
 
     if (filters?.completed !== undefined) {
       constraints.push(where("completed", "==", filters.completed));
     }
 
-    const validSortFields = ["createdAt", "title"];
-    if (filters?.sort && validSortFields.includes(filters.sort)) {
-      constraints.push(
-        orderBy(
-          filters.sort,
-          filters.direction === "desc" ? "desc" : "asc"
-        )
-      );
+    const hasSearch = !!filters?.search && filters.search.trim() !== "";
+    const limitValue = filters?.limit || 10;
+
+    if (hasSearch) {
+      const needle = filters!.search!.trim().toLowerCase();
+      constraints.push(where("titleLower", ">=", needle));
+      constraints.push(where("titleLower", "<=", needle + "\uf8ff"));
+      constraints.push(orderBy("titleLower", "asc"));
     } else {
-      constraints.push(orderBy("createdAt", "desc"));
+      const validSortFields = ["createdAt", "title"];
+      if (filters?.sort && validSortFields.includes(filters.sort)) {
+        constraints.push(
+          orderBy(filters.sort, filters.direction === "desc" ? "desc" : "asc")
+        );
+      } else {
+        constraints.push(orderBy("createdAt", "desc"));
+      }
     }
 
-    const limitValue = filters?.limit || 10;
-    const page = filters?.page || 1;
+    const fetchLimit = limitValue + 1;
+    constraints.push(limit(fetchLimit));
 
-    let q = query(collection(db, "tasks"), ...constraints);
+    if (filters?.lastDocId) {
+      const lastDocRef = doc(this.db, "tasks", filters.lastDocId);
+      const lastDocSnap = await getDoc(lastDocRef);
+      if (lastDocSnap.exists()) {
+        constraints.push(startAfter(lastDocSnap));
+      }
+    }
 
-    const allDocs = await getDocs(q);
-    const allItems = allDocs.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    } as Task));
+    const q = query(collection(this.db, "tasks"), ...constraints);
+    const snapshot = await getDocs(q);
 
-    const total = allItems.length;
-    const totalPages = Math.ceil(total / limitValue);
+    const items: Task[] = [];
+    let hasMore = false;
 
-    const startIndex = (page - 1) * limitValue;
-    const endIndex = startIndex + limitValue;
+    snapshot.docs.forEach((docSnapshot: QueryDocumentSnapshot<DocumentData>, index: number) => {
+      if (index >= limitValue) {
+        hasMore = true;
+        return; 
+      }
+      items.push({
+        id: docSnapshot.id,
+        ...docSnapshot.data(),
+      } as Task);
+    });
 
-    const items = allItems.slice(startIndex, endIndex);
+    let nextCursor: string | undefined;
+
+    if (hasMore && items.length > 0) {
+      const lastItem = items[items.length - 1];
+      nextCursor = lastItem.id;
+    }
 
     return {
       items,
-      total,
-      page,
-      limit: limitValue,
-      totalPages,
+      nextCursor,
+      hasMore,
     };
   }
 }

@@ -1,14 +1,38 @@
-import { Task, TaskFilters, PaginatedResult, GetTasksRepository, CreateTaskRepository, UpdateTaskRepository, DeleteTaskRepository } from "core";
+import { 
+  Task, 
+  TaskFilters, 
+  TaskResult, 
+  TaskUseCase,
+  GetTasksRepository,
+  CreateTaskRepository,
+  UpdateTaskRepository, 
+  DeleteTaskRepository 
+} from "core";
 
-export class TaskUseCases {
-  constructor(
-    private getRepository: GetTasksRepository,
-    private createRepository: CreateTaskRepository,
-    private updateRepository: UpdateTaskRepository,
-    private deleteRepository: DeleteTaskRepository
-  ) {}
+export class TaskUseCaseImpl implements TaskUseCase {
+  private getRepository: GetTasksRepository;
+  private createRepository: CreateTaskRepository;
+  private updateRepository: UpdateTaskRepository;
+  private deleteRepository: DeleteTaskRepository;
 
-  async getTasks(filters?: TaskFilters): Promise<PaginatedResult<Task>> {
+  constructor({
+    getRepository,
+    createRepository,
+    updateRepository,
+    deleteRepository,
+  }: {
+    getRepository: GetTasksRepository;
+    createRepository: CreateTaskRepository;
+    updateRepository: UpdateTaskRepository;
+    deleteRepository: DeleteTaskRepository;
+  }) {
+    this.getRepository = getRepository;
+    this.createRepository = createRepository;
+    this.updateRepository = updateRepository;
+    this.deleteRepository = deleteRepository;
+  }
+
+  async getTasks(filters?: TaskFilters): Promise<TaskResult> {
     return this.getRepository.getAll(filters);
   }
 

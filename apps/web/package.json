@@ -13,6 +13,7 @@
     "@todo-list/presentation": "workspace:*",
     "awilix": "^13.0.5",
     "core": "workspace:*",
+    "firebase": "^10.0.0",
     "next": "latest",
     "react": "latest",
     "react-dom": "latest"

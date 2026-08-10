@@ -1,12 +1,11 @@
-import type { TaskUseCases } from '@todo-list/domain';
+import type { TaskUseCase } from 'core'; 
+import { resolveTaskUseCases } from './container';
 
-let taskUseCasesInstance: TaskUseCases | null = null;
+let taskUseCasesInstance: TaskUseCase | null = null;
 
-export async function getTaskUseCases(): Promise<TaskUseCases> {
+export async function getTaskUseCases(): Promise<TaskUseCase> {
   if (!taskUseCasesInstance) {
-    // Utiliser import() dynamique pour charger seulement à l'exécution
-    const container = (await import('./container')).default;
-    taskUseCasesInstance = container.resolve('taskUseCases');
+    taskUseCasesInstance = resolveTaskUseCases();
   }
-  return taskUseCasesInstance as TaskUseCases;
+  return taskUseCasesInstance;
 }
