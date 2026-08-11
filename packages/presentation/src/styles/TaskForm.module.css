@@ -1,0 +1,65 @@
+/* packages/presentation/src/styles/TaskForm.module.css */
+
+.form {
+  display: flex;
+  gap: var(--space-3);
+  margin: var(--space-4) 0;
+}
+
+.input {
+  flex: 1;
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--text-sm);
+  color: var(--neutral-800);
+  background: rgb(28, 28, 28);
+  border: 1.5px solid var(--neutral-200);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-base);
+}
+
+.input::placeholder {
+  color: var(--neutral-400);
+}
+
+.input:focus {
+  border-color: var(--blue-500);
+  box-shadow: 0 0 0 3px var(--blue-100);
+}
+
+.input:hover:not(:focus) {
+  border-color: var(--neutral-300);
+}
+
+.submitButton {
+  padding: var(--space-3) var(--space-6);
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: white;
+  background: var(--blue-800);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-base);
+  white-space: nowrap;
+}
+
+.submitButton:hover {
+  background: var(--blue-600);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.submitButton:active {
+  transform: scale(0.98);
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 480px) {
+  .form {
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .submitButton {
+    width: 100%;
+    text-align: center;
+  }
+}

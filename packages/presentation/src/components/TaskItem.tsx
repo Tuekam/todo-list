@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Task } from "core";
+import styles from "../styles/TaskItem.module.css";
 
 type TaskItemProps = {
   task: Task;
@@ -29,26 +30,48 @@ export default function TaskItem({ task, onDelete, onUpdate }: TaskItemProps) {
     setIsEditing(false);
   };
 
+  const toggleComplete = async () => {
+    await onUpdate(task.id, { completed: !task.completed });
+  };
+
   return (
-    <div style={{ display: "flex", gap: 10, marginBottom: 10, alignItems: "center" }}>
+    <div className={styles.item}>
       {isEditing ? (
-        <div style={{ display: "flex", gap: 10, alignItems: "center", flex: 1 }}>
+        <div className={styles.editContainer}>
           <input
             type="text"
             value={editTitle}
             onChange={(e) => setEditTitle(e.target.value)}
             autoFocus
-            style={{ flex: 1, padding: 4, fontSize: 16 }}
+            className={styles.editInput}
           />
-          <button onClick={saveEdit}>Enregistrer</button>
-          <button onClick={cancelEdit}>Annuler</button>
+          <button onClick={saveEdit} className={styles.saveButton}>
+            Enregistrer
+          </button>
+          <button onClick={cancelEdit} className={styles.cancelButton}>
+            Annuler
+          </button>
         </div>
       ) : (
-        <div style={{ display: "flex", gap: 10, alignItems: "center", flex: 1 }}>
-          <span style={{ flex: 1 }}>{task.title}</span>
-          <button onClick={startEditing}>Modifier</button>
-          <button onClick={() => onDelete(task.id)}>Supprimer</button>
-        </div>
+        <>
+          <input
+            type="checkbox"
+            checked={task.completed}
+            onChange={toggleComplete}
+            className={styles.checkbox}
+          />
+          <span className={`${styles.title} ${task.completed ? styles.completed : ""}`}>
+            {task.title}
+          </span>
+          <div className={styles.actions}>
+            <button onClick={startEditing} className={styles.editButton}>
+              Modifier
+            </button>
+            <button onClick={() => onDelete(task.id)} className={styles.deleteButton}>
+              Supprimer
+            </button>
+          </div>
+        </>
       )}
     </div>
   );

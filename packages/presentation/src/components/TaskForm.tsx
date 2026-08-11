@@ -1,5 +1,7 @@
 "use client";
 
+import styles from "../styles/TaskForm.module.css";
+
 type TaskFormProps = {
   title: string;
   setTitle: (value: string) => void;
@@ -8,14 +10,17 @@ type TaskFormProps = {
 
 export default function TaskForm({ title, setTitle, addTask }: TaskFormProps) {
   return (
-    <form onSubmit={addTask}>
+    <form onSubmit={addTask} className={styles.form}>
       <input
         type="text"
-        placeholder="Nouvelle tâche"
+        placeholder="Nouvelle tâche..."
         value={title}
         onChange={(e) => setTitle(e.target.value)}
+        className={styles.input}
       />
-      <button type="submit">Ajouter</button>
+      <button type="submit" className={styles.submitButton}>
+        Ajouter
+      </button>
     </form>
   );
 }

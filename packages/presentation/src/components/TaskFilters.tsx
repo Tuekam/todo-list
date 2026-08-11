@@ -1,8 +1,10 @@
 "use client";
 
+import styles from "../styles/TaskFilters.module.css";
+
 type TaskFiltersProps = {
   search: string | undefined;
-  setSearch: (value: string | undefined) => void; 
+  setSearch: (value: string | undefined) => void;
   completed: boolean | undefined;
   setCompleted: (value: boolean | undefined) => void;
   sort: string | undefined;
@@ -22,19 +24,13 @@ export default function TaskFilters({
   setLimit,
 }: TaskFiltersProps) {
   return (
-    <div style={{ margin: "20px 0", display: "flex", gap: 10, flexWrap: "wrap" }}>
+    <div className={styles.filters}>
       <input
         type="text"
         placeholder="Rechercher une tâche..."
         value={search || ""}
         onChange={(e) => setSearch(e.target.value || undefined)}
-        style={{
-          padding: 8,
-          border: "1px solid #ccc",
-          borderRadius: 4,
-          minWidth: 200,
-          fontSize: 14,
-        }}
+        className={styles.searchInput}
       />
 
       <select
@@ -43,9 +39,9 @@ export default function TaskFilters({
           const value = e.target.value;
           setCompleted(value === "" ? undefined : value === "true");
         }}
-        style={{ padding: 8, border: "1px solid #ccc", borderRadius: 4, fontSize: 14 }}
+        className={styles.select}
       >
-        <option value="">Toutes les tâches</option>
+        <option value="">Toutes</option>
         <option value="true">Terminées</option>
         <option value="false">En cours</option>
       </select>
@@ -53,7 +49,7 @@ export default function TaskFilters({
       <select
         value={sort || ""}
         onChange={(e) => setSort(e.target.value || undefined)}
-        style={{ padding: 8, border: "1px solid #ccc", borderRadius: 4, fontSize: 14 }}
+        className={styles.select}
       >
         <option value="">Trier par...</option>
         <option value="createdAt">Date de création</option>
@@ -63,7 +59,7 @@ export default function TaskFilters({
       <select
         value={limit || ""}
         onChange={(e) => setLimit(e.target.value ? Number(e.target.value) : undefined)}
-        style={{ padding: 8, border: "1px solid #ccc", borderRadius: 4, fontSize: 14 }}
+        className={styles.select}
       >
         <option value="">Toutes</option>
         <option value="5">5</option>

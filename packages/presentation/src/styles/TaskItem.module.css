@@ -1,0 +1,162 @@
+/* packages/presentation/src/styles/TaskItem.module.css */
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: var(--neutral-50);
+  border: 1px solid var(--neutral-200);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-base);
+}
+
+.item:hover {
+  border-color: var(--neutral-300);
+  box-shadow: var(--shadow-xs);
+  background: var(--neutral-100);
+}
+
+/* ========== CHECKBOX ========== */
+.checkbox {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  accent-color: var(--blue-500);
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+}
+
+.checkbox:hover {
+  transform: scale(1.1);
+}
+
+/* ========== TITRE ========== */
+.title {
+  flex: 1;
+  font-size: var(--text-sm);
+  color: var(--neutral-800);
+  transition: all var(--transition-fast);
+}
+
+.title.completed {
+  text-decoration: line-through;
+  color: var(--neutral-400);
+}
+
+/* ========== ACTIONS ========== */
+.actions {
+  display: flex;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+.editButton {
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--text-xs);
+  font-weight: var(--font-medium);
+  color: var(--neutral-600);
+  background: transparent;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+}
+
+.editButton:hover {
+  color: whitesmoke;
+  background: rgb(74, 74, 74);
+}
+
+.deleteButton {
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--text-xs);
+  font-weight: var(--font-medium);
+  color: var(--neutral-500);
+  background: transparent;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+}
+
+.deleteButton:hover {
+  color: whitesmoke;
+  background: rgb(215, 77, 77);
+}
+
+/* ========== MODE ÉDITION ========== */
+.editContainer {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex: 1;
+}
+
+.editInput {
+  flex: 1;
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-sm);
+  border: 2px solid var(--blue-500);
+  border-radius: var(--radius-sm);
+  background: rgb(28, 28, 28);
+  transition: all var(--transition-fast);
+  color: aliceblue;
+}
+
+.editInput:focus {
+  box-shadow: 0 0 0 3px var(--blue-100);
+}
+
+.saveButton {
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--text-xs);
+  font-weight: var(--font-medium);
+  color: white;
+  background: var(--blue-100);
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+}
+
+.saveButton:hover {
+  background: var(--blue-600);
+}
+
+.cancelButton {
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--text-xs);
+  font-weight: var(--font-medium);
+  color: var(--neutral-600);
+  background: var(--neutral-100);
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+}
+
+.cancelButton:hover {
+  background: var(--neutral-200);
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 480px) {
+  .item {
+    flex-wrap: wrap;
+    padding: var(--space-3);
+  }
+
+  .actions {
+    width: 100%;
+    justify-content: flex-end;
+    margin-top: var(--space-1);
+  }
+
+  .editContainer {
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .editInput {
+    width: 100%;
+    font-size: var(--text-sm);
+  }
+
+  .title {
+    font-size: var(--text-sm);
+  }
+}

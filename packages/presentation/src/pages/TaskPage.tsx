@@ -7,6 +7,7 @@ import TaskList from "../components/TaskList";
 import TaskFilters from "../components/TaskFilters";
 import { ConfirmationModal } from "../components/ConfirmationModal";
 import { UseTasksReturn } from "../hooks/useTasks";
+import styles from "../styles/TaskPage.module.css";
 
 type TaskPageProps = {
   useTasks: (filters?: TaskFiltersType) => UseTasksReturn;
@@ -43,6 +44,7 @@ export function TaskPage({ useTasks }: TaskPageProps) {
     deleteTask, 
     hasMore,
     loadMore,
+    loading,
   } = useTasks(filters);
 
   const addTask = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -66,8 +68,11 @@ export function TaskPage({ useTasks }: TaskPageProps) {
   };
 
   return (
-    <main style={{ padding: 30 }}>
-      <h1>Todo List</h1>
+    <main className={styles.container}>
+      <div className={styles.header}>
+        <h1 className={styles.title}>Tâches</h1>
+        <span className={styles.taskCount}>{tasks.length}</span>
+      </div>
 
       <TaskFilters
         search={searchInput}
@@ -80,31 +85,30 @@ export function TaskPage({ useTasks }: TaskPageProps) {
         setLimit={setLimitFilter}
       />
 
-      <hr style={{ margin: "20px 0" }} />
-
       <TaskForm title={title} setTitle={setTitle} addTask={addTask} />
 
-      <hr style={{ margin: "20px 0" }} />
+      <hr className={styles.section} />
+
+      {loading && tasks.length === 0 && (
+        <p className={styles.loading}>Chargement...</p>
+      )}
 
       <TaskList tasks={tasks} onDelete={confirmDelete} onUpdate={updateTask} />
 
       {hasMore && (
-        <div style={{ display: "flex", justifyContent: "center", marginTop: 20 }}>
+        <div className={styles.loadMoreContainer}>
           <button
             onClick={loadMore}
-            style={{
-              padding: "10px 24px",
-              backgroundColor: "#4f4d4d",
-              color: "white",
-              border: "none",
-              borderRadius: 4,
-              cursor: "pointer",
-              fontSize: 14,
-            }}
+            disabled={loading}
+            className={styles.loadMoreButton}
           >
-            Charger plus
+            {loading ? "Chargement..." : "Afficher plus"}
           </button>
         </div>
+      )}
+
+      {!hasMore && tasks.length > 0 && (
+        <p className={styles.allLoaded}>Toutes les tâches sont affichées</p>
       )}
 
       <ConfirmationModal
@@ -112,7 +116,7 @@ export function TaskPage({ useTasks }: TaskPageProps) {
         onClose={() => setShowDeleteModal(false)}
         onConfirm={handleDelete}
         title="Confirmer la suppression"
-        message="Êtes-vous sûr de vouloir supprimer cette tâche ? Cette action est irréversible."
+        message="Cette action est irréversible. Êtes-vous certain de vouloir supprimer cette tâche ?"
       />
     </main>
   );

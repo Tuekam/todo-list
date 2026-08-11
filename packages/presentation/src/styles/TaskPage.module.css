@@ -1,0 +1,93 @@
+/* packages/presentation/src/styles/TaskPage.module.css */
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: var(--space-8) var(--space-4);
+  min-height: 100vh;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-8);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--neutral-200);
+}
+
+.title {
+  font-size: var(--text-2xl);
+  font-weight: var(--font-bold);
+  color: var(--neutral-900);
+  letter-spacing: -0.03em;
+}
+
+.taskCount {
+  font-size: var(--text-sm);
+  color: var(--neutral-500);
+  background: var(--neutral-200);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+}
+
+.section {
+  margin: var(--space-4) 0;
+  border: none;
+  border-top: 1px solid var(--neutral-200);
+}
+
+/* ========== LOADING ========== */
+.loading {
+  text-align: center;
+  color: var(--neutral-500);
+  font-size: var(--text-sm);
+  padding: var(--space-8) 0;
+}
+
+/* ========== LOAD MORE ========== */
+.loadMoreContainer {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--space-6);
+}
+
+.loadMoreButton {
+  padding: var(--space-3) var(--space-6);
+  background: var(--neutral-200);
+  color: var(--neutral-700);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  transition: all var(--transition-base);
+  width: 100%;
+  max-width: 300px;
+}
+
+.loadMoreButton:hover:not(:disabled) {
+  background: var(--neutral-300);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.loadMoreButton:disabled {
+  opacity: 0.5;
+}
+
+.allLoaded {
+  text-align: center;
+  color: var(--neutral-400);
+  font-size: var(--text-sm);
+  margin-top: var(--space-6);
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 640px) {
+  .container {
+    padding: var(--space-4);
+  }
+
+  .title {
+    font-size: var(--text-xl);
+  }
+}
