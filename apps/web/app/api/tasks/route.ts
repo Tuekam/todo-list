@@ -1,7 +1,6 @@
 import { getTaskUseCases } from "@/lib/services";
-import { NextRequest } from "next/server";
 
-export async function GET(request: NextRequest) {
+export async function GET(request: Request) {
   try {
     const taskUseCases = await getTaskUseCases();
     const { searchParams } = new URL(request.url);
@@ -18,6 +17,18 @@ export async function GET(request: NextRequest) {
 
     const result = await taskUseCases.getTasks(filters);
     return Response.json(result);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Erreur inconnue";
+    return Response.json({ message }, { status: 500 });
+  }
+}
+
+export async function POST(request: Request) {
+  try {
+    const taskUseCases = await getTaskUseCases();
+    const body = await request.json();
+    const task = await taskUseCases.createTask(body.title, body.category);
+    return Response.json(task, { status: 201 });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Erreur inconnue";
     return Response.json({ message }, { status: 500 });

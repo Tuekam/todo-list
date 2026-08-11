@@ -7,6 +7,7 @@ import TaskList from "../components/TaskList";
 import TaskFilters from "../components/TaskFilters";
 import { ConfirmationModal } from "../components/ConfirmationModal";
 import { UseTasksReturn } from "../hooks/useTasks";
+import { useInfiniteScroll } from "../hooks/useInfiniteScroll";
 import styles from "../styles/TaskPage.module.css";
 
 type TaskPageProps = {
@@ -19,7 +20,7 @@ export function TaskPage({ useTasks }: TaskPageProps) {
   const [searchFilter, setSearchFilter] = useState<string | undefined>(undefined);
   const [completedFilter, setCompletedFilter] = useState<boolean | undefined>(undefined);
   const [sortFilter, setSortFilter] = useState<string | undefined>(undefined);
-  const [limitFilter, setLimitFilter] = useState<number | undefined>(5);
+  const [limitFilter, setLimitFilter] = useState<number | undefined>(undefined);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [taskToDelete, setTaskToDelete] = useState<string | null>(null);
 
@@ -46,6 +47,8 @@ export function TaskPage({ useTasks }: TaskPageProps) {
     loadMore,
     loading,
   } = useTasks(filters);
+
+  const sentinelRef = useInfiniteScroll(loadMore, hasMore, loading);
 
   const addTask = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -96,15 +99,11 @@ export function TaskPage({ useTasks }: TaskPageProps) {
       <TaskList tasks={tasks} onDelete={confirmDelete} onUpdate={updateTask} />
 
       {hasMore && (
-        <div className={styles.loadMoreContainer}>
-          <button
-            onClick={loadMore}
-            disabled={loading}
-            className={styles.loadMoreButton}
-          >
-            {loading ? "Chargement..." : "Afficher plus"}
-          </button>
-        </div>
+        <div ref={sentinelRef} style={{ height: 20, margin: 10 }} />
+      )}
+
+      {loading && tasks.length > 0 && (
+        <p className={styles.loadingMore}>Chargement de plus de tâches...</p>
       )}
 
       {!hasMore && tasks.length > 0 && (
