@@ -1,7 +1,7 @@
 import {
   collection, getDocs, query, where, orderBy,
   QueryConstraint, Firestore, limit, startAfter, doc, getDoc,
-  QueryDocumentSnapshot, DocumentData
+  QueryDocumentSnapshot, DocumentData, Timestamp
 } from "firebase/firestore";
 import { Task, GetTasksRepository, TaskFilters, TaskResult } from "core";
 
@@ -21,18 +21,18 @@ export class TaskGetRepositoryImpl implements GetTasksRepository {
 
     const hasSearch = !!filters?.search && filters.search.trim() !== "";
     const limitValue = filters?.limit || 10;
+    const direction = filters?.direction === "desc" ? "desc" : "asc";
 
     if (hasSearch) {
       const needle = filters!.search!.trim().toLowerCase();
       constraints.push(where("titleLower", ">=", needle));
       constraints.push(where("titleLower", "<=", needle + "\uf8ff"));
-      constraints.push(orderBy("titleLower", "asc"));
+      // On respecte la direction choisie par l'utilisateur même en recherche
+      constraints.push(orderBy("titleLower", direction));
     } else {
       const validSortFields = ["createdAt", "title"];
       if (filters?.sort && validSortFields.includes(filters.sort)) {
-        constraints.push(
-          orderBy(filters.sort, filters.direction === "desc" ? "desc" : "asc")
-        );
+        constraints.push(orderBy(filters.sort, direction));
       } else {
         constraints.push(orderBy("createdAt", "desc"));
       }
@@ -60,9 +60,22 @@ export class TaskGetRepositoryImpl implements GetTasksRepository {
         hasMore = true;
         return; 
       }
+
+      const data = docSnapshot.data();
+
+      // Conversion du Timestamp Firestore en Date JavaScript
+      let createdAt = new Date();
+      if (data.createdAt instanceof Timestamp) {
+        createdAt = data.createdAt.toDate();
+      } else if (data.createdAt && typeof data.createdAt.toDate === 'function') {
+        createdAt = data.createdAt.toDate();
+      }
+
       items.push({
         id: docSnapshot.id,
-        ...docSnapshot.data(),
+        title: data.title,
+        completed: data.completed,
+        createdAt: createdAt,
       } as Task);
     });
 

@@ -6,6 +6,7 @@ import TaskForm from "../components/TaskForm";
 import TaskList from "../components/TaskList";
 import TaskFilters from "../components/TaskFilters";
 import { ConfirmationModal } from "../components/ConfirmationModal";
+import Toast from "../components/Toast";
 import { UseTasksReturn } from "../hooks/useTasks";
 import { useInfiniteScroll } from "../hooks/useInfiniteScroll";
 import styles from "../styles/TaskPage.module.css";
@@ -19,10 +20,16 @@ export function TaskPage({ useTasks }: TaskPageProps) {
   const [searchInput, setSearchInput] = useState<string | undefined>(undefined);
   const [searchFilter, setSearchFilter] = useState<string | undefined>(undefined);
   const [completedFilter, setCompletedFilter] = useState<boolean | undefined>(undefined);
-  const [sortFilter, setSortFilter] = useState<string | undefined>(undefined);
-  const [limitFilter, setLimitFilter] = useState<number | undefined>(undefined);
+  const [sortFilter, setSortFilter] = useState<string | undefined>("createdAt");
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
+  const [limitFilter, setLimitFilter] = useState<number | undefined>(10);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [taskToDelete, setTaskToDelete] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+  const showSuccess = (msg: string) => {
+    setSuccessMessage(msg);
+  };
 
   useEffect(() => {
     const handle = setTimeout(() => {
@@ -35,8 +42,9 @@ export function TaskPage({ useTasks }: TaskPageProps) {
     search: searchFilter,
     completed: completedFilter,
     sort: sortFilter,
+    direction: sortDirection,
     limit: limitFilter,
-  }), [searchFilter, completedFilter, sortFilter, limitFilter]);
+  }), [searchFilter, completedFilter, sortFilter, sortDirection, limitFilter]);
 
   const { 
     tasks, 
@@ -55,6 +63,7 @@ export function TaskPage({ useTasks }: TaskPageProps) {
     if (!title.trim()) return;
     await createTask(title);
     setTitle("");
+    showSuccess("Tâche ajoutée avec succès");
   };
 
   const confirmDelete = async (id: string) => {
@@ -67,6 +76,15 @@ export function TaskPage({ useTasks }: TaskPageProps) {
       await deleteTask(taskToDelete);
       setTaskToDelete(null);
       setShowDeleteModal(false);
+      showSuccess("Tâche supprimée");
+    }
+  };
+
+  const handleUpdate = async (id: string, data: any) => {
+    await updateTask(id, data);
+    if (data.title) showSuccess("Tâche modifiée");
+    else if (data.completed !== undefined) {
+      showSuccess(data.completed ? "Tâche terminée" : "Tâche réouverte");
     }
   };
 
@@ -84,6 +102,8 @@ export function TaskPage({ useTasks }: TaskPageProps) {
         setCompleted={setCompletedFilter}
         sort={sortFilter}
         setSort={setSortFilter}
+        direction={sortDirection}
+        setDirection={setSortDirection}
         limit={limitFilter}
         setLimit={setLimitFilter}
       />
@@ -96,7 +116,7 @@ export function TaskPage({ useTasks }: TaskPageProps) {
         <p className={styles.loading}>Chargement...</p>
       )}
 
-      <TaskList tasks={tasks} onDelete={confirmDelete} onUpdate={updateTask} />
+      <TaskList tasks={tasks} onDelete={confirmDelete} onUpdate={handleUpdate} />
 
       {hasMore && (
         <div ref={sentinelRef} style={{ height: 20, margin: 10 }} />
@@ -117,6 +137,10 @@ export function TaskPage({ useTasks }: TaskPageProps) {
         title="Confirmer la suppression"
         message="Cette action est irréversible. Êtes-vous certain de vouloir supprimer cette tâche ?"
       />
+
+      {successMessage && (
+        <Toast message={successMessage} onClose={() => setSuccessMessage(null)} />
+      )}
     </main>
   );
 }

@@ -27,7 +27,7 @@ export async function POST(request: Request) {
   try {
     const taskUseCases = await getTaskUseCases();
     const body = await request.json();
-    const task = await taskUseCases.createTask(body.title, body.category);
+    const task = await taskUseCases.createTask(body.title);
     return Response.json(task, { status: 201 });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Erreur inconnue";

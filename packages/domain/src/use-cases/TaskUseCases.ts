@@ -36,7 +36,7 @@ export class TaskUseCaseImpl implements TaskUseCase {
     return this.getRepository.getAll(filters);
   }
 
-  async createTask(title: string, category?: string): Promise<Task> {
+  async createTask(title: string): Promise<Task> {
     if (!title || title.trim() === "") {
       throw new Error("Le titre est obligatoire");
     }
@@ -44,7 +44,6 @@ export class TaskUseCaseImpl implements TaskUseCase {
     return this.createRepository.create({
       title: title.trim(),
       completed: false,
-      category: category as "study" | "work" | "personal",
     });
   }
 

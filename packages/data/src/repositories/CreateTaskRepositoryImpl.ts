@@ -9,23 +9,21 @@ export class TaskCreateRepositoryImpl implements CreateTaskRepository {
   }
 
   async create(task: Omit<Task, "id" | "createdAt">): Promise<Task> {
+    const createdAt = new Date();
     const docData: Record<string, any> = {
       title: task.title,
       titleLower: task.title.toLowerCase(),
       completed: task.completed,
-      createdAt: new Date(),
+      createdAt: createdAt,
     };
-
-    if (task.category) {
-      docData.category = task.category;
-    }
 
     const docRef = await addDoc(collection(this.db, "tasks"), docData);
 
     return {
       id: docRef.id,
-      ...task,
-      createdAt: new Date(),
+      title: task.title,
+      completed: task.completed,
+      createdAt: createdAt,
     };
   }
 }

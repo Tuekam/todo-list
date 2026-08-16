@@ -8,7 +8,7 @@ export type UseTasksReturn = {
   loading: boolean;
   error: string | null;
   hasMore: boolean;
-  createTask: (title: string, category?: string) => Promise<void>;
+  createTask: (title: string) => Promise<void>;
   updateTask: (id: string, data: Partial<Task>) => Promise<void>;
   deleteTask: (id: string) => Promise<void>;
   reload: () => Promise<void>;
@@ -31,11 +31,11 @@ export function useTasksFactory() {
       return res.json();
     },
 
-    createTask: async (title: string, category?: string): Promise<Task> => {
+    createTask: async (title: string): Promise<Task> => {
       const res = await fetch(`/api/tasks`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, category }),
+        body: JSON.stringify({ title }),
       });
       if (!res.ok) throw new Error("Erreur creating task");
       return res.json();
@@ -115,9 +115,9 @@ export function useTasksFactory() {
       loadTasks(filters);
     }, [filters, loadTasks]);
 
-    const createTask = async (title: string, category?: string) => {
+    const createTask = async (title: string) => {
       try {
-        await api.createTask(title, category);
+        await api.createTask(title);
         await reload();
       } catch (err) {
         setError(err instanceof Error ? err.message : "Erreur inconnue");

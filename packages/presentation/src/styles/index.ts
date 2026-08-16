@@ -1,6 +1,4 @@
 
-export { default as variables } from "./variables.css";
-
 export { default as taskPageStyles } from "./TaskPage.module.css";
 export { default as taskListStyles } from "./TaskList.module.css";
 export { default as taskItemStyles } from "./TaskItem.module.css";

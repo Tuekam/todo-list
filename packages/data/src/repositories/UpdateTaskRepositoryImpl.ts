@@ -1,4 +1,4 @@
-import { doc, getDoc, updateDoc, Firestore } from "firebase/firestore";
+import { doc, getDoc, updateDoc, Firestore, Timestamp } from "firebase/firestore";
 import { Task, UpdateTaskRepository } from "core";
 
 export class TaskUpdateRepositoryImpl implements UpdateTaskRepository {
@@ -24,6 +24,19 @@ export class TaskUpdateRepositoryImpl implements UpdateTaskRepository {
       throw new Error("Tâche non trouvée après mise à jour");
     }
 
-    return { id: docSnap.id, ...docSnap.data() } as Task;
+    const taskData = docSnap.data();
+    let createdAt = new Date();
+    if (taskData.createdAt instanceof Timestamp) {
+        createdAt = taskData.createdAt.toDate();
+    } else if (taskData.createdAt && typeof taskData.createdAt.toDate === 'function') {
+        createdAt = taskData.createdAt.toDate();
+    }
+
+    return {
+        id: docSnap.id,
+        title: taskData.title,
+        completed: taskData.completed,
+        createdAt: createdAt
+    } as Task;
   }
 }
